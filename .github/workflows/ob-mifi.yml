@@ -49,4 +49,4 @@ jobs:
         FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
         PUSH_MODE: ${{ inputs.push_mode || 'simple' }}
       run: |
-        python ob_mifi.py
+        python ob_mifi1.py
