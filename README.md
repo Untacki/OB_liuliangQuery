@@ -22,8 +22,7 @@
 进入你的仓库 → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
 
 #### 必需配置：
-- **`WIFI_DEV_NOS`**: 你的设备号，多个设备用 `&` 连接
-- 
+- **`WIFI_DEV_NOS`**: 你的设备号，多个设备用 `&` 连接 
 #### 推送配置（至少配置一个）：
 - **企业微信**: `WECHAT_ROBOT_WEBHOOK`
 - **WxPusher** (推荐): `WXPUSHER_APP_TOKEN` + `WXPUSHER_UIDS`
