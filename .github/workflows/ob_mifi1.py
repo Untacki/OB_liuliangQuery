@@ -38,7 +38,7 @@ FEISHU_WEBHOOK = os.getenv('FEISHU_WEBHOOK')
 # 'full' (详细推送，并打印所有可读字段)
 # 'simple' (精简推送)
 # 'off' (不推送)
-PUSH_MODE = 'full'
+PUSH_MODE = 'simple'
 # ------------------------------
 
 def push_to_wecom(title, content):
@@ -344,3 +344,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
