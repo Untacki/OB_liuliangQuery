@@ -270,7 +270,7 @@ def main():
                 else:
                     output_lines.append("  无流量卡信息")
                 
-                print('\n'.join(output_lines))
+                # print('\n'.join(output_lines))
                 
                 # 推送内容格式化
                 push_title = f"欧本设备 [{dev_no}] 流量查询成功"
@@ -342,4 +342,5 @@ def main():
             print('--- ✅ 任务结束 ---\n')
 
 if __name__ == "__main__":
+
     main()
