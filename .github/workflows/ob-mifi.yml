@@ -6,7 +6,10 @@ on:
     # - cron: '0 0 * * *'
     # 每天北京时间晚上8点运行（UTC时间12点）  
     # - cron: '0 12 * * *'
-    - cron: '*/5 * * * *'
+    - cron: '0 1 * * *'
+    - cron: '30 3 * * *'
+    - cron: '30 9 * * *'
+    - cron: '0 15 * * *'
   workflow_dispatch:  # 允许手动触发
     inputs:
       push_mode:
