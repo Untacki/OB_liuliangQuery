@@ -3,9 +3,10 @@ name: OB MIFI Traffic Monitor
 on:
   schedule:
     # 每天北京时间早上8点运行（UTC时间0点）
-    - cron: '0 0 * * *'
+    # - cron: '0 0 * * *'
     # 每天北京时间晚上8点运行（UTC时间12点）  
-    - cron: '0 12 * * *'
+    # - cron: '0 12 * * *'
+    - cron: '* * * * *'
   workflow_dispatch:  # 允许手动触发
     inputs:
       push_mode:
@@ -49,4 +50,4 @@ jobs:
         FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
         PUSH_MODE: ${{ inputs.push_mode || 'simple' }}
       run: |
-        python ob_mifi1.py
+        python ./ob_mifi1.py
