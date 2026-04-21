@@ -15,7 +15,7 @@ on:
       push_mode:
         description: '推送模式 (full/simple/off)'
         required: false
-        default: 'simple'
+        default: 'full'
         type: choice
         options:
         - full
