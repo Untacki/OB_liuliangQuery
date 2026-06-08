@@ -208,13 +208,17 @@ def main():
         push_title = ''
 
         try:
+            # 从最新接口地址提取基础域名，用于请求头
+            parsed_url = urllib.parse.urlparse(latest_url)
+            base_url = f'{parsed_url.scheme}://{parsed_url.netloc}'
+
             data = {'dev_no': dev_no, 'type': 2}
             headers = {
-                 'Content-Type': 'application/json',
-                 'Accept': '*/*',
-                 'Origin': 'http://gdey.ruijiadashop.cn',
-                 'Referer': 'http://gdey.ruijiadashop.cn/index.html',
-                 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1'
+                'Content-Type': 'application/json',
+                'Accept': '*/*',
+                'Origin': base_url,
+                'Referer': f'{base_url}/index.html',
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1'
             }
             response = requests.post(
                 latest_url,
@@ -276,7 +280,7 @@ def main():
                 else:
                     output_lines.append("  无流量卡信息")
                 
-                # print('\n'.join(output_lines))
+                print('\n'.join(output_lines))
                 
                 # 推送内容格式化
                 push_title = f"欧本设备 [{dev_no}] 流量查询成功"
@@ -293,7 +297,7 @@ def main():
                         f"--- 📱 设备信息 ---\n"
                         f"设备号: 【{get_value(equipment, 'dev_no', '无设备号')}】\n"
                         f"设备状态: {device_status_text}\n"
-                        f"设备电量: {get_value(equipment, 'devicePower', '无电量信息')}%"
+                        f"设备电量: {get_value(equipment, 'devicePower', '无电量信息')}%\n"
                         f"最后上报时间: {get_value(equipment, 'reportTime', '无上报时间信息')}\n"
                         f"运行时长: {get_value(equipment, 'runningTime', '无运行时长信息')}\n"
                         f"热点名称: {get_value(equipment, 'hotspotName', '无热点名称')}\n"
