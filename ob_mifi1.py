@@ -1,7 +1,7 @@
 import os
 import requests
-import json
 import urllib.parse
+import datetime
 
 # --- 配置项 ---
 # 在青龙面板选择-环境变量-然后添加变量名称WIFI_DEV_NOS，值就填你的设备号，多个设备号用英文 & 符号连接。
@@ -42,6 +42,25 @@ FEISHU_WEBHOOK = os.getenv('FEISHU_WEBHOOK')
 PUSH_MODE = os.getenv('PUSH_MODE', 'simple')
 # ------------------------------
 
+def days_until(expiretime_str):
+    """计算距离流量有效期还有多少天"""
+    try:
+        expire = datetime.datetime.strptime(expiretime_str.strip(), '%Y-%m-%d').date()
+        return (expire - datetime.date.today()).days
+    except (ValueError, AttributeError):
+        return None
+
+def build_expiry_warning(days_left):
+    """如果有效期不足5天，返回警告文本"""
+    if days_left is None:
+        return ''
+    if days_left < 0:
+        return '\n⚠️ 流量已过期，请及时充值！'
+    elif days_left < 5:
+        return f'\n⚠️ 流量有效期不足5天（剩余{days_left}天），请及时充值！'
+    return ''
+
+# --- 推送函数 ---
 def push_to_wecom(title, content):
     """通过企业微信机器人推送消息"""
     data = {
@@ -234,15 +253,16 @@ def main():
                 # 数据处理与格式化
                 info = res_data['data']
                 equipment = info.get('equipment', {})
-                
+
                 # 处理流量数据，如果缺失则显示提示
                 total_amount = info.get('totalAmount')
                 remain_amount = info.get('remainAmount')
-                
+                expiretime = info.get('expiretime', '')
+
                 total_gb_str = f"{(total_amount / 1024):.2f}" if total_amount is not None else "无总流量信息"
                 remain_gb_str = f"{(remain_amount / 1024):.2f}" if remain_amount is not None else "无剩余流量信息"
                 used_gb_str = f"{((total_amount - remain_amount) / 1024):.2f}" if total_amount is not None and remain_amount is not None else "无法计算已使用流量"
-                
+
                 # 使用三元运算符更新设备状态判断逻辑
                 device_status_text = '🟢 在线' if equipment.get('deviceStatus') == 1 else '🔴 离线'
 
@@ -251,6 +271,10 @@ def main():
                     value = data_dict.get(key)
                     return value if value is not None and value != '' else default_text
 
+                days_left = days_until(expiretime) if expiretime else None
+                expiry_warning = build_expiry_warning(days_left)
+
+                # --- 控制台输出 ---
                 output_lines = [
                     "--- 📋 查询结果详细信息 ---",
                     f"套餐名称: {get_value(info, 'packageName', '无套餐信息')}",
@@ -259,7 +283,7 @@ def main():
                     f"总流量: {total_gb_str} GB",
                     f"剩余流量: {remain_gb_str} GB",
                     f"已使用流量: {used_gb_str} GB",
-                    f"到期时间: {get_value(info, 'expiretime', '无到期时间信息')}",
+                    f"流量过期时间: {expiretime if expiretime else '无过期时间'}",
                     f"设备号: {get_value(equipment, 'dev_no', '无设备号')}",
                     f"设备状态: {device_status_text}",
                     f"设备电量: {get_value(equipment, 'devicePower', '无电量信息')}%",
@@ -280,17 +304,18 @@ def main():
                         output_lines.append(f"    ICCID: {get_value(card, 'iccid', '无ICCID')}")
                 else:
                     output_lines.append("  无流量卡信息")
-                
-                # print('\n'.join(output_lines))
-                
-                # 推送内容格式化
+
+                #print('\n'.join(output_lines))
+
+                # --- 推送内容构建（每次运行都推送） ---
                 push_title = f"欧本设备 [{dev_no}] 流量查询成功"
+
                 if PUSH_MODE == 'full':
                     push_content = (
                         f"✨ 流量卡查询结果\n\n"
                         f"套餐名称: 【{get_value(info, 'packageName', '无套餐信息')}】\n"
                         f"使用网络: 【{get_value(info, 'operator', '无网络信息')}】\n"
-                        f"到期时间: {get_value(info, 'expiretime', '无到期时间信息')}\n\n"
+                        f"流量过期时间: 【{expiretime if expiretime else '无过期时间'}】\n\n"
                         f"--- 🚀 流量详情 ---\n"
                         f"总流量: 【{total_gb_str} GB】\n"
                         f"剩余流量: 【{remain_gb_str} GB】\n"
@@ -325,11 +350,16 @@ def main():
                         f"套餐名称: {get_value(info, 'packageName', '无套餐信息')}\n"
                         f"总流量: {total_gb_str} GB\n"
                         f"剩余流量: {remain_gb_str} GB\n"
-                        f"已使用: {used_gb_str} GB\n\n"
+                        f"已使用: {used_gb_str} GB\n"
+                        f"流量过期时间: {expiretime if expiretime else '无过期时间'}\n"
                         f"设备号: {dev_no}\n"
-                        f"设备状态: {device_status_text}\n"
-                        f"最后上报时间: {get_value(equipment, 'reportTime', '无上报时间信息')}\n"
+                        #f"设备状态: {device_status_text}\n"
+                        #f"最后上报时间: {get_value(equipment, 'reportTime', '无上报时间信息')}\n"
                     )
+
+                # 追加过期警告
+                if expiry_warning:
+                    push_content += expiry_warning
             else:
                 print('❌ 登录失败！')
                 error_msg = res_data.get('msg', '未知错误')
