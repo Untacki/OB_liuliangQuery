@@ -208,11 +208,17 @@ def main():
         push_title = ''
 
         try:
-            data = {'dev_no': dev_no,'type': 2}
-            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+            data = {'dev_no': dev_no, 'type': 2}
+            headers = {
+                 'Content-Type': 'application/json'
+                # 'Accept': '*/*',
+                # 'Origin': 'http://gdey.ruijiadashop.cn',
+                # 'Referer': 'http://gdey.ruijiadashop.cn/index.html',
+                # 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1'
+            }
             response = requests.post(
                 latest_url,
-                data=urllib.parse.urlencode(data),
+                json=data,
                 headers=headers,
                 allow_redirects=True
             )
