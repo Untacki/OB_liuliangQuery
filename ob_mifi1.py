@@ -208,7 +208,7 @@ def main():
         push_title = ''
 
         try:
-            data = {'dev_no': dev_no}
+            data = {'dev_no': dev_no,'type': 2}
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             response = requests.post(
                 latest_url,
