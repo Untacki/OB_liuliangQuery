@@ -6,7 +6,7 @@ on:
     # - cron: '0 0 * * *'
     # 每天北京时间晚上8点运行（UTC时间12点）  
     # - cron: '0 12 * * *'
-    - cron: '0 1 * * *'
+    - cron: '0 1,9 * * *'
     # - cron: '30 3 * * *'
     # - cron: '30 9 * * *'
     # - cron: '0 15 * * *'
@@ -39,7 +39,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install requests
-        
+
+    - name: Restore traffic threshold state
+      uses: actions/cache@v4
+      with:
+        path: traffic_state.json
+        key: obmifi-state-${{ github.run_id }}
+        restore-keys: |
+          obmifi-state-
+
     - name: Run OB MIFI Monitor
       env:
         WIFI_DEV_NOS: ${{ secrets.WIFI_DEV_NOS }}
