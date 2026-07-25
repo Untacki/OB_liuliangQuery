@@ -77,6 +77,11 @@ def check_threshold(dev_no, used_gb, state, step_gb=THRESHOLD_STEP_GB):
     current_threshold = (used_gb // step_gb) * step_gb
     last_threshold = state.get(dev_no, 0)
 
+    # 检测新计费周期：当前用量远低于上次记录的阈值，说明流量已重置
+    if last_threshold > 0 and current_threshold <= last_threshold - step_gb:
+        state[dev_no] = current_threshold
+        return True, current_threshold, state
+
     if current_threshold > last_threshold and current_threshold > 0:
         state[dev_no] = current_threshold
         return True, current_threshold, state
