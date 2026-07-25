@@ -372,7 +372,7 @@ def main():
                     f"剩余流量: {remain_gb_str} GB",
                     f"已使用流量: {used_gb_str} GB",
                     f"流量过期时间: {expiretime if expiretime else '无过期时间'}",
-                    f"设备号: {get_value(equipment, 'dev_no', '无设备号')}",
+                    f"设备号: {get_value(equipment, '********', '无设备号')}",
                     f"设备状态: {device_status_text}",
                     f"设备电量: {get_value(equipment, 'devicePower', '无电量信息')}%",
                     f"最后上报时间: {get_value(equipment, 'reportTime', '无上报时间信息')}",
@@ -382,18 +382,18 @@ def main():
                     "--- 💳 流量卡列表 ---"
                 ]
 
-                if equipment.get('card_list'):
-                    for i, card in enumerate(equipment['card_list']):
-                        card_status_text = '🟢 使用中' if card.get('currentUsage') == 1 else '🔴 未使用'
-                        output_lines.append(f"  卡片 {i+1}:")
-                        output_lines.append(f"    运营商: {get_value(card, 'operator_text', '无运营商信息')}")
-                        output_lines.append(f"    状态: {card_status_text}")
-                        output_lines.append(f"    实名状态: {get_value(card, 'realname_status_text', '无实名状态')}")
-                        output_lines.append(f"    ICCID: {get_value(card, 'iccid', '无ICCID')}")
-                else:
-                    output_lines.append("  无流量卡信息")
+                # if equipment.get('card_list'):
+                #     for i, card in enumerate(equipment['card_list']):
+                #         card_status_text = '🟢 使用中' if card.get('currentUsage') == 1 else '🔴 未使用'
+                #         output_lines.append(f"  卡片 {i+1}:")
+                #         output_lines.append(f"    运营商: {get_value(card, 'operator_text', '无运营商信息')}")
+                #         output_lines.append(f"    状态: {card_status_text}")
+                #         output_lines.append(f"    实名状态: {get_value(card, 'realname_status_text', '无实名状态')}")
+                #         output_lines.append(f"    ICCID: {get_value(card, 'iccid', '无ICCID')}")
+                # else:
+                #     output_lines.append("  无流量卡信息")
 
-                #print('\n'.join(output_lines))
+                print('\n'.join(output_lines))
 
                 # --- 推送内容构建 ---
                 # 格式化运行时长
