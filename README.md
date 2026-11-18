@@ -2,7 +2,6 @@
 # 欧本 MIFI 流量监控
 原作者：https://github.com/lgz666/OB_WiFiQuery
 基于 GitHub Actions 的欧本 MIFI 设备流量自动查询和推送系统。
-# test
 ## 功能特点
 
 - 📱 自动查询欧本 MIFI 设备流量使用情况
